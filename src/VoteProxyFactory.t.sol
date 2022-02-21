@@ -1,7 +1,12 @@
 pragma solidity >=0.4.24;
 
 import "ds-test/test.sol";
+import "ds-chief/chief.sol";
 import "./VoteProxyFactory.sol";
+
+interface Hevm {
+    function roll(uint) external;
+}
 
 contract VoteUser {
     DSChief chief;
@@ -48,6 +53,8 @@ contract VoteUser {
 
 
 contract VoteProxyFactoryTest is DSTest {
+    Hevm hevm;
+
     uint256 constant electionSize = 3;
 
     VoteProxyFactory voteProxyFactory;
@@ -59,13 +66,17 @@ contract VoteProxyFactoryTest is DSTest {
     VoteUser hot;
 
     function setUp() public {
+        hevm = Hevm(address(bytes20(uint160(uint256(keccak256('hevm cheat code'))))));
+
         gov = new DSToken("GOV");
 
         DSChiefFab fab = new DSChiefFab();
-        chief = fab.newChief(gov, electionSize);
-        voteProxyFactory = new VoteProxyFactory(chief);
+        chief = DSChief(address(fab.newChief(gov, electionSize)));
+        voteProxyFactory = new VoteProxyFactory(address(chief));
         cold = new VoteUser(voteProxyFactory);
         hot  = new VoteUser(voteProxyFactory);
+
+        hevm.roll(1);
     }
 
     function test_initiateLink() public {
@@ -111,6 +122,8 @@ contract VoteProxyFactoryTest is DSTest {
         cold.proxyApprove(address(voteProxy), chief.GOV());
         cold.proxyLock(voteProxy, 1);
         assertTrue(!cold.tryBreakLink());
+
+        hevm.roll(2);
 
         cold.proxyFree(voteProxy, 1);
         assertTrue(cold.tryBreakLink());
