@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 /// VoteProxyFactory.sol
 
 // Copyright (C) 2018-2020 Maker Ecosystem Growth Holdings, INC.
@@ -16,7 +18,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // create and keep record of proxy identities
-pragma solidity >=0.4.24;
+pragma solidity >=0.6.12;
 
 import "./VoteProxy.sol";
 

@@ -1,4 +1,6 @@
-pragma solidity >=0.4.24;
+// SPDX-License-Identifier: MIT
+
+pragma solidity >=0.6.12;
 
 import "ds-test/test.sol";
 import "ds-chief/chief.sol";
